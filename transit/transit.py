@@ -397,12 +397,15 @@ class System(object):
 
     """
 
-    def __init__(self, central, iobs=90.0):
+    def __init__(self, central, iobs=90.0,dilution=0.):
         self.central = central
         self.central.system = self
         self.bodies = []
         self.iobs = iobs
         self.unfrozen = np.zeros(5, dtype=bool)
+
+        assert 0 <= dilution < 1, 'Dilution must be between 0 and 1!'
+        self.dilution = dilution
 
     def add_body(self, body):
         """
@@ -441,9 +444,11 @@ class System(object):
         if len(self.bodies) == 0:
             return self.central.flux + np.zeros_like(t)
 
-        return CythonSolver().kepler_light_curve(len(self.bodies),
+        flux = CythonSolver().kepler_light_curve(len(self.bodies),
                                                  self._get_params(),
                                                  t, texp, tol, maxdepth)
+
+        return  1 - (1 - flux)*(1 - self.dilution)
 
     def light_curve_gradient(self, t, texp=0.0, tol=1e-8, maxdepth=4):
         """

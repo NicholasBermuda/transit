@@ -28,6 +28,7 @@ def find_eigen(hint=None):
         "/usr/include/eigen3",
         "/usr/include/local",
         "/usr/include",
+        "/Users/nicholasbarton/Downloads/eigen-eigen-b30b87236a1b",
     ]
 
     # Loop over search paths and check for the existence of the Eigen/Dense
